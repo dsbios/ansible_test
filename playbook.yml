@@ -1,0 +1,54 @@
+- name: test_playbook
+  hosts: [aws-servers]
+  become: yes
+  vars:
+  - services_stop:
+      Debian: apache2
+      RedHat: httpd
+  - repo:
+      Debian:
+      - apt
+      RedHat:
+      - yum
+  - packages:
+      Debian:
+      - php
+      - nginx
+      - mysql-server
+      - redis
+      - phpmyadmin
+#      - redisadmin
+      RedHat:
+      - php
+      - nginx
+      - python-mysqldb
+      - mysql
+      - redis
+      - phpmyadmin
+#      - redisadmin
+  - services:
+      Debian: nginx
+      RedHat: nginx
+
+  tasks:
+   - name: Apache stop
+     service:
+       name: "{{ services_stop[ansible_os_family] }}"
+       state: stopped
+       enabled: no
+
+   - name: Install repo
+     package:
+       name: "{{ repo[ansible_os_family] }}"
+       update_cache: yes
+
+   - name: Install Web Server Packages
+     package:
+       name: "{{ packages[ansible_os_family] }}"
+       state: latest
+
+   - name: Web Service Start
+     service:
+       name: "{{ services[ansible_os_family] }}"
+       state: restarted
+       enabled: yes
