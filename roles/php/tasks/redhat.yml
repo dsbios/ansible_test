@@ -1,34 +1,55 @@
 ---
-- name: Install PHP {{php_version}} PPA Repo
-  yum: name="ppa:ondrej/php"
-  tags:
-     - php
 
-- name: Install PHP {{php_version}}
-  yum: name=php{{php_version}} state=latest
+- name: epel repo 
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+    state: present
+
+- name: download remi release repo for php
+  get_url: url=https://rpms.remirepo.net/enterprise/remi-release-8.rpm dest=/tmp/remi-release-8.rpm
+  tags: php-fpm
+
+- name: install remi repo
+  shell: /bin/rpm -Uvh /tmp/remi-release-8.rpm
+  register: remi_repo_result
+  failed_when: "'conflict' in remi_repo_result.stderr"
+  tags: php-fpm
+
+- name: Ensure dnf-plugins are installed on CentOS 8+.
+  yum:
+    name: dnf-plugins-core
+    state: present
+
+- name: Enable DNF module for CentOS 8+.
+  shell: |
+    dnf config-manager --set-enabled powertools
+    dnf module enable -y php:remi-7.4
+  args:
+    warn: false
+  register: dnf_module_enable
+
+
+
+#- name: Install PHP 
+#  yum: name=php state=latest
 
 - name: Install PHP packages
   become: true
-  yum:
-    name: "{{ item }}"
-    state: latest
+  dnf: name={{ item }} state=latest enablerepo=remi,remi-php74
   with_items:
-    - php{{php_version}}-curl
-    - php{{php_version}}-fpm
-    - php{{php_version}}-intl
-    - php{{php_version}}-mysql
-    - php{{php_version}}-xml
-    - php{{php_version}}-mbstring
-    - php{{php_version}}-cli
-    - php{{php_version}}-common
-    - php{{php_version}}-json
-    - php{{php_version}}-gd
-    - php{{php_version}}-mcrypt
-    - php{{php_version}}-odbc
-    - php{{php_version}}-pgsql
-    - php{{php_version}}-xmlrpc
-    - php{{php_version}}-opcache
-    - php{{php_version}}-bz2
+    - php-fpm
+    - php-common
+    - php-devel
+    - php-cli
+    - php-pdo
+    - php-gd
+    - php-xml
+    - php-mbstring
+    - php-mcrypt
+    - php-mysql
+    - php-igbinary
+    - php-bcmath
+    - php-opcache
   notify: Restart PHP-FPM
   tags:
      - php

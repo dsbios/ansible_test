@@ -7,3 +7,14 @@
   service:
     name: nginx
     state: restarted
+
+- name: start mysql
+  service: 
+    name: mysql
+    enabled: yes
+    state: started
+- name: restart mysql
+  service: 
+    name: mysql
+    enabled: yes
+    state: restarted
