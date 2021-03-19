@@ -1,0 +1,9 @@
+php_version: 7.4
+app_work_dir: /var/www/html
+mysql_host: "localhost"
+mysql_db: app_name
+mysql_user: sql_user
+mysql_pass: 12345qwerty
+server_name: "app_name"
+nginx_version: 1.19.*
+mysql_version: 8.0

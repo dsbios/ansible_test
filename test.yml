@@ -1,0 +1,14 @@
+- hosts: aws-servers
+  become: yes
+  gather_facts: yes
+
+  vars_files:
+    - ./global_vars/vars.yml
+  roles:
+    - php
+    - mysql
+    - redis
+    - nginx
+
+  handlers:
+    - include: handlers/main.yml

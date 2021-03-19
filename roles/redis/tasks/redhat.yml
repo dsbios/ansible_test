@@ -1,0 +1,10 @@
+---
+- name: Install Redis Server
+  yum:
+    name: redis-server
+    state: latest
+    
+- name: Check Redis  Server status
+  yum:
+    name: redis-server
+    state: present
