@@ -15,16 +15,27 @@
     key: http://nginx.org/keys/nginx_signing.key
 
 - name: Ensure APT official nginx repository
-  yum: name="deb http://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+  yum: name="http://nginx.org/packages/rhel/8/x86_64/RPMS/nginx-1.18.0-2.el8.ngx.x86_64.rpm"
 
-- name: Ensure APT official nginx repository (mainline)
-  yum: name="deb http://nginx.org/packages/mainline/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+#- name: Ensure APT official nginx repository (mainline)
+#  yum: name="http://nginx.org/packages/mainline/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+
+- name: Ensure group "somegroup" exists
+  ansible.builtin.group:
+    name: www-data
+    state: present
+
+- name: Add the user 'james' with a bash shell, appending the group 'admins' and 'developers' to the user's groups
+  ansible.builtin.user:
+    name: www-data
+    groups: www-data
 
 - name: mkdir and сopy prod
   ansible.builtin.file:
     path: /var/www/html
     state: directory
     mode: '0755'
+  become: yes
  
 - name: copy file
   ansible.builtin.copy:
@@ -33,10 +44,23 @@
     owner: www-data
     group: www-data
     mode: '0644'
+  become: yes
+
+- name: mkdir sites aviable
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available
+    state: directory
+    mode: '0755'
+
+- name: mkdir sites enabled
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled
+    state: directory
+    mode: '0755'
 
 - name: Install Nginx web server
   yum:
-    name: nginx={{nginx_version}}
+    name: nginx
     state: present
   notify: Restart Nginx
   tags:

@@ -23,7 +23,21 @@
     path: /var/www/html
     state: directory
     mode: '0755'
- 
+
+- name: mkdir sites aviable
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available
+    state: directory
+    mode: '0755'
+  when: ansible_distribution == 'Debian'
+
+- name: mkdir sites enabled
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled
+    state: directory
+    mode: '0755'
+  when: ansible_distribution == 'Debian' 
+
 - name: copy file
   ansible.builtin.copy:
     src: ./files/index.php

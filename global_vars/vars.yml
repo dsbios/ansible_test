@@ -1,9 +1,15 @@
+python3_tmpdir: "{{ tmpdir_path }}/python3" 
+python3_command: python3.6
+python3_bashrc: "{{ ansible_user_dir}}/.bash_profile"
+python3_local: "{{ ansible_user_dir}}/.local/bin"
+python3_pyenv: null
+tmpdir_path: /tmp
 php_version: 7.4
 app_work_dir: /var/www/html
-mysql_host: "127.0.0.1"
-mysql_db: app_name
-mysql_user: sql_user
-mysql_pass: 12345qwerty
+#mysql_host: "127.0.0.1"
+#mysql_db: app_name
+#mysql_user: sql_user
+#mysql_pass: 12345qwerty
 server_name: "app_name"
 nginx_version: 1.19.*
-mysql_version: 8.0
+#mysql_version: 8.0
