@@ -19,6 +19,9 @@
   yum:
     name: dnf-plugins-core
     state: present
+  tags:
+     - php
+
 
 - name: Enable DNF module for CentOS 8+.
   shell: |
@@ -27,11 +30,8 @@
   args:
     warn: false
   register: dnf_module_enable
-
-
-
-#- name: Install PHP 
-#  yum: name=php state=latest
+  tags:
+     - php
 
 - name: Install PHP packages
   become: true

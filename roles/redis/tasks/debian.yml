@@ -3,8 +3,12 @@
   apt:
     name: redis-server
     state: latest
+  tags:
+    - redis
     
 - name: Check Redis  Server status
   apt:
     name: redis-server
     state: present
+  tags:
+    - redis

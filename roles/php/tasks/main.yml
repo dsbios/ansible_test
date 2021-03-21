@@ -1,5 +1,9 @@
 - include: redhat.yml
   when: ansible_os_family == 'RedHat'
+  tags:
+     - php
 
 - include: debian.yml
   when: ansible_os_family == 'Debian'
+  tags:
+     - php

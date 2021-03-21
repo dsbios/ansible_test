@@ -11,18 +11,26 @@
 
 - name: Ensure APT official nginx key
   apt_key: url=http://nginx.org/keys/nginx_signing.key
+  tags:
+    - nginx
 
 - name: Ensure APT official nginx repository
   apt_repository: repo="deb http://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+  tags:
+    - nginx
 
 - name: Ensure APT official nginx repository (mainline)
   apt_repository: repo="deb http://nginx.org/packages/mainline/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+  tags:
+    - nginx
 
 - name: mkdir and сopy prod
   ansible.builtin.file:
     path: /var/www/html
     state: directory
     mode: '0755'
+  tags:
+    - nginx
 
 - name: mkdir sites aviable
   ansible.builtin.file:
@@ -30,13 +38,17 @@
     state: directory
     mode: '0755'
   when: ansible_distribution == 'Debian'
+  tags:
+    - nginx
 
 - name: mkdir sites enabled
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled
     state: directory
     mode: '0755'
-  when: ansible_distribution == 'Debian' 
+  when: ansible_distribution == 'Debian'
+  tags:
+    - nginx
 
 - name: copy file
   ansible.builtin.copy:
@@ -45,6 +57,8 @@
     owner: www-data
     group: www-data
     mode: '0644'
+  tags:
+    - nginx
 
 - name: Install Nginx web server
   apt:

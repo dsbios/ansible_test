@@ -13,22 +13,27 @@
   ansible.builtin.rpm_key:
     state: present
     key: http://nginx.org/keys/nginx_signing.key
+  tags:
+    - nginx
 
 - name: Ensure APT official nginx repository
   yum: name="http://nginx.org/packages/rhel/8/x86_64/RPMS/nginx-1.18.0-2.el8.ngx.x86_64.rpm"
-
-#- name: Ensure APT official nginx repository (mainline)
-#  yum: name="http://nginx.org/packages/mainline/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+  tags:
+    - nginx
 
 - name: Ensure group "somegroup" exists
   ansible.builtin.group:
     name: www-data
     state: present
+  tags:
+    - nginx
 
 - name: Add the user 'james' with a bash shell, appending the group 'admins' and 'developers' to the user's groups
   ansible.builtin.user:
     name: www-data
     groups: www-data
+  tags:
+    - nginx
 
 - name: mkdir and сopy prod
   ansible.builtin.file:
@@ -36,6 +41,8 @@
     state: directory
     mode: '0755'
   become: yes
+  tags:
+    - nginx
  
 - name: copy file
   ansible.builtin.copy:
@@ -45,18 +52,24 @@
     group: www-data
     mode: '0644'
   become: yes
+  tags:
+    - nginx
 
 - name: mkdir sites aviable
   ansible.builtin.file:
     path: /etc/nginx/sites-available
     state: directory
     mode: '0755'
+  tags:
+    - nginx
 
 - name: mkdir sites enabled
   ansible.builtin.file:
     path: /etc/nginx/sites-enabled
     state: directory
     mode: '0755'
+  tags:
+    - nginx
 
 - name: Install Nginx web server
   yum:
@@ -67,7 +80,13 @@
     - nginx
 
 - name: Remove Nginx default
-  shell: "rm -rf /etc/nginx/conf.d/default.conf"
+  shell: "rm -rf /etc/nginx/conf.d/php-fpm.conf"
+  tags:
+    - nginx
+  notify: Restart Nginx
+
+- name: Remove Nginx default
+  shell: "rm -rf /etc/nginx/default.d/php.conf"
   tags:
     - nginx
   notify: Restart Nginx
@@ -84,7 +103,7 @@
 - name: Update nginx config files
   become: true
   template:
-    src: templates/nginx1.conf
+    src: templates/nginx_redhat.conf
     dest: "/etc/nginx/sites-available/default"
   tags:
     - nginx

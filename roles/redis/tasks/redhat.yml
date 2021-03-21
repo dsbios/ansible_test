@@ -3,8 +3,12 @@
   dnf:
     name: redis
     state: latest
+  tags:
+    - redis
     
 - name: Check Redis  Server status
   dnf:
     name: redis
     state: present
+  tags:
+    - redis
